@@ -4,10 +4,14 @@ import java.util.Scanner;
 
 public class JogoDoMilhao {
 
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int opcaoMenu = 0;
+
+        // F8: pelo menos 2 vetores relacionados (declarados no main para respeitar a regra F9 sem globais)
+        String[] codigosRanking = new String[50];
+        int[] pontuacoesRanking = new int[50];
+        int qtdJogadores = 0; // controla quantas pessoas já jogaram
 
         // F1: o main contém apenas o menu e as chamadas de funções
         do{
@@ -16,13 +20,20 @@ public class JogoDoMilhao {
 
             switch (opcaoMenu){
                 case 1:
-                    System.out.println("Iniciando jogo...");
+                    // a função jogar agora devolve os pontos, e guardamos na variável
+                    int pontosFinais = jogar(sc);
+
+                    // Luiz: criar a função salvarPartida e descomentar a linha abaixo
+                    // qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
                     break;
                 case 2:
-                    System.out.println("Como Jogar...");
+                    // Bruno: criar a função mostrarComoJogar e descomentar a linha abaixo
+                    // mostrarComoJogar();
                     break;
                 case 3:
-                    System.out.println("Ranking...");
+                    // Vitor: criar as funções ordenarRanking e exibirRanking e descomentar as linhas abaixo
+                    // ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
+                    // exibirRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
                     break;
                 case 4:
                     System.out.println("Saindo do Jogo do Milhão. Obrigado por jogar e evitar o desperdício!");
@@ -81,4 +92,121 @@ public class JogoDoMilhao {
         }
         return opcao;
     }
+
+    /*
+      O que faz: Controla o loop das 8 situações do jogo, chamando as perguntas e calculando os pontos.
+      Parâmetros: Scanner sc
+      Retorno: void
+      Autores: Equipe (Bruno e Gabriel)
+     */
+    // J2: 8 situações baseadas no diagnóstico guardadas em vetores
+    public static int jogar(Scanner sc){
+        // Vetor 1: as 8 perguntas do diagnóstico
+        String[] perguntas = {
+                "Ao jogar comida no lixo, o que mais se perde junto com ela?",
+                "Fazer lista de compras e olhar o que já tem em casa é perda de tempo?",
+                "Qual gás liberado por frutas maduras (como banana) acelera o amadurecimento das outras?",
+                "O que significa arrumar a despensa pelo método PVPS?",
+                "Uma fruta muito madura deve ir direto para o lixo?",
+                "Depois de pronta, a comida deve ser guardada na geladeira em no máximo quanto tempo?",
+                "Na lista de ingredientes de um rótulo, a ordem dos itens significa o quê?",
+                "Quando a cadeia do frio (refrigeração) do alimento é quebrada, o que acontece?"
+        };
+
+        // Vetor 2 (Matriz): as opções de cada pergunta (cada linha é uma pergunta)
+        String[][] opcoes = {
+                {"1 - Só o dinheiro", "2 - Água, solo e energia usados na produção", "3 - Apenas espaço no lixo"},
+                {"1 - Verdade, no mercado eu lembro", "2 - Mito, planejar evita compras repetidas e desperdício"},
+                {"1 - Oxigênio", "2 - Gás Carbônico", "3 - Gás Etileno"},
+                {"1 - Primeiro que Vence, Primeiro que Sai", "2 - Pagar a Vista Para Sobrar", "3 - Produtos Verdes Para Saladas"},
+                {"1 - Sim, já estragou", "2 - Não, pode ser congelada ou virar doce/bolo"},
+                {"1 - 6 horas", "2 - 12 horas", "3 - 2 horas"},
+                {"1 - Ordem alfabética", "2 - Do maior para o menor em quantidade", "3 - Do mais barato para o mais caro"},
+                {"1 - Nada, se colocar na geladeira depois", "2 - A validade deixa de valer e pode estragar antes"}
+        };
+
+        // Vetor 3: o gabarito (qual é o número da resposta certa de cada uma)
+        int[] respostasCertas = {2, 2, 3, 1, 2, 3, 2, 2};
+
+        // Vetor 4: a conscientização (regra J4)
+        String[] explicacoes = {
+                "O desperdício tem um impacto invisível: gasta os recursos naturais do planeta (Fonte: FAO).",
+                "Mito! Planejar o cardápio evita comprar por impulso o que você já tem em casa.",
+                "É o gás etileno! Separe as bananas maduras das outras hortaliças para elas durarem mais.",
+                "O que vence primeiro deve ficar na frente na geladeira para ser consumido logo.",
+                "Fruta madura não é lixo! Use o aproveitamento integral (Fonte: CEASA).",
+                "Deixar a comida mais de 2h fora da geladeira aumenta o risco de bactérias.",
+                "O primeiro ingrediente listado é o que tem em maior quantidade no produto.",
+                "Quebrar a cadeia do frio compromete a segurança da comida."
+        };
+
+        // começa o jogo com 0 pontos
+        int pontuacao = 0;
+
+        System.out.println("\n=== INICIANDO A SEMANA SEM DESPERDÍCIO ===");
+
+        for (int i = 0; i < perguntas.length; i++){
+            // Bruno: criar a função mostrarSituacao e descomentar a linha abaixo
+            // mostrarSituacao(perguntas[i], opcoes[i], i);
+
+            System.out.print("Sua resposta: ");
+            int resposta = lerEntradaValida(sc, 1, opcoes[i].length);
+
+            // Gabriel: criar a função atualizarPontuacao e descomentar a linha abaixo
+            // pontuacao = atualizarPontuacao(pontuacao, resposta, respostasCertas[i], explicacoes[i]);
+        }
+
+        System.out.println("\n🎉 FIM DA SEMANA! Sua pontuação final foi: " + pontuacao);
+
+        // retorna os pontos para o main, onde o Luiz vai pegar para salvar
+        return pontuacao;
+    }
+
+    // =========================================================================
+    // ÁREA DOS COLEGAS: ESTRUTURAS VAZIAS PARA ELES PREENCHEREM A LÓGICA
+    // =========================================================================
+
+    /*
+      O que faz: Mostra as instruções do jogo.
+      Parâmetros: nenhum
+      Retorno: void
+      Autor: Bruno Kaefer
+     */
+    // public static void mostrarComoJogar() {
+    //      (Bruno coloca os System.out.println das regras aqui)
+    // }
+
+    /*
+      O que faz: Pede o código P0X do jogador e salva a pontuação nos vetores.
+      Parâmetros: String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc
+      Retorno: int (nova quantidade de jogadores)
+      Autor: Luiz Gabriel
+     */
+    // F8, J6
+    // public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
+    //      (Luiz coloca a lógica de salvar nos vetores aqui)
+    //      return qtdAtual + 1;
+    // }
+
+    /*
+      O que faz: Ordena os vetores do maior para o menor sem usar funções prontas.
+      Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
+      Retorno: void
+      Autor: Vitor Soares
+     */
+    // F7
+    // public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
+    //      (Vitor coloca a lógica do laço de ordenação (Bubble Sort) aqui)
+    // }
+
+    /*
+      O que faz: Exibe o ranking, e calcula a maior, menor e média.
+      Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
+      Retorno: void
+      Autor: Vitor Soares
+     */
+    // J6
+    // public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
+    //      (Vitor coloca o for que imprime o ranking e calcula a média aqui)
+    // }
 }
