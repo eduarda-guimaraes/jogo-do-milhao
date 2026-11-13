@@ -27,8 +27,7 @@ public class JogoDoMilhao {
                     // qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
                     break;
                 case 2:
-                    // Bruno: criar a função mostrarComoJogar e descomentar a linha abaixo
-                    // mostrarComoJogar();
+                    mostrarComoJogar();
                     break;
                 case 3:
                     // Vitor: criar as funções ordenarRanking e exibirRanking e descomentar as linhas abaixo
@@ -146,8 +145,7 @@ public class JogoDoMilhao {
         System.out.println("\n=== INICIANDO A SEMANA SEM DESPERDÍCIO ===");
 
         for (int i = 0; i < perguntas.length; i++){
-            // Bruno: criar a função mostrarSituacao e descomentar a linha abaixo
-            // mostrarSituacao(perguntas[i], opcoes[i], i);
+            mostrarSituacao(perguntas[i], opcoes[i], i);
 
             System.out.print("Sua resposta: ");
             int resposta = lerEntradaValida(sc, 1, opcoes[i].length);
@@ -167,26 +165,46 @@ public class JogoDoMilhao {
     // =========================================================================
 
     /*
-      O que faz: Mostra as instruções do jogo.
+      O que faz: Exibe as regras e instruções de como jogar o Jogo do Milhão.
       Parâmetros: nenhum
       Retorno: void
-      Autor: Bruno Kaefer
+      Autor: Bruno Leonardo
      */
-    // public static void mostrarComoJogar() {
-    //      (Bruno coloca os System.out.println das regras aqui)
-    // }
+    // J1: imprime na tela a descrição de como jogar
+    // F3: função com retorno void
+    public static void mostrarComoJogar(){
+        System.out.println("\nCOMO JOGAR: ");
+        System.out.println("O jogo consiste de 8 desafios (perguntas) diversos ");
+        System.out.println("sobre casos recorrentes durante a semana de consumo de alimentos.");
+        System.out.println("Desafios como:");
+        System.out.println(" • Múltipla escolha — uma alternativa está certa");
+        System.out.println(" • Verdade ou mito — julgue a afirmação");
+        System.out.println("Cada acerto soma 100 pontos!");
+        System.out.println("No final será gerado um ranking anônimo dos usuários.");
+        System.out.println("Cada pergunta terá uma explicação confiável!");
+        System.out.println("O jogo tem como intuito conscientizar as pessoas sobre a causa!");
+        System.out.println("--------------------------------------------------");
+    }
 
     /*
-      O que faz: Pede o código P0X do jogador e salva a pontuação nos vetores.
-      Parâmetros: String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc
-      Retorno: int (nova quantidade de jogadores)
-      Autor: Luiz Gabriel
+      O que faz: Imprime a pergunta atual e faz um laço para exibir as alternativas formatadas.
+      Parâmetros: String pergunta, String[] opcoes, int rodada
+      Retorno: void
+      Autor: Bruno Leonardo
      */
-    // F8, J6
-    // public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
-    //      (Luiz coloca a lógica de salvar nos vetores aqui)
-    //      return qtdAtual + 1;
-    // }
+    // J2: exibe situações do diagnóstico
+    // F4: recebe um vetor de Strings (opcoes) como parâmetro
+    // F3: função com retorno void
+    public static void mostrarSituacao(String pergunta, String[] opcoes, int rodada) {
+        System.out.println("\n--------------------------------------------------");
+        System.out.println("Pergunta " + (rodada + 1) + ": " + pergunta);
+
+        // Percorre o vetor de opções correspondente à rodada atual para exibir as alternativas
+        for (int i = 0; i < opcoes.length; i++) {
+            System.out.println(opcoes[i]);
+        }
+        System.out.println("--------------------------------------------------");
+    }
 
     /*
       O que faz: Ordena os vetores do maior para o menor sem usar funções prontas.
