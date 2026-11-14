@@ -30,9 +30,9 @@ public class JogoDoMilhao {
                     mostrarComoJogar();
                     break;
                 case 3:
-                    // Vitor: criar as funções ordenarRanking e exibirRanking e descomentar as linhas abaixo
-                    // ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
-                    // exibirRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
+                    // Exibe o ranking de forma ordenada
+                    ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
+                    exibirRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
                     break;
                 case 4:
                     System.out.println("Saindo do Jogo do Milhão. Obrigado por jogar e evitar o desperdício!");
@@ -213,9 +213,22 @@ public class JogoDoMilhao {
       Autor: Vitor Soares
      */
     // F7
-    // public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
-    //      (Vitor coloca a lógica do laço de ordenação (Bubble Sort) aqui)
-    // }
+    public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
+        int auxInt = 0;
+        String auxString = "";
+        for(int j = qtdAtual; j > 1; j--) {
+            for(int i = 0; i < (j-1); i++) {
+                if(pontuacoes[i] < pontuacoes[i+1]) {
+                    auxInt = pontuacoes[i];
+                    pontuacoes[i] = pontuacoes[i+1];
+                    pontuacoes[i+1] = auxInt;
+                    auxString = codigos[i];
+                    codigos[i] = codigos[i+1];
+                    codigos[i+1] = auxString;
+                }
+            }
+        }
+    }
 
     /*
       O que faz: Exibe o ranking, e calcula a maior, menor e média.
@@ -224,7 +237,20 @@ public class JogoDoMilhao {
       Autor: Vitor Soares
      */
     // J6
-    // public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
-    //      (Vitor coloca o for que imprime o ranking e calcula a média aqui)
-    // }
+    public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
+        System.out.println("Ranking Final 🏆");
+        if(qtdAtual == 0) {
+            System.out.println("Ainda não há jogadores no ranking.");
+            return;
+        }
+
+        float soma = 0;
+        for(int i = 0; i < qtdAtual; i++) {
+            soma += pontuacoes[i];
+            System.out.println((i+1) + "° Lugar: " + codigos[i] + " - " + pontuacoes[i] + " pontos");
+        }
+        System.out.printf("A pontuação média da sessão foi de: %.2f pontos%n", (soma/qtdAtual));
+        System.out.println("A maior pontuação foi de: " + codigos[0] + " com um total de " + pontuacoes[0] + " pontos");
+        System.out.println("A menor pontuação foi de: " + codigos[qtdAtual-1] + " com um total de " + pontuacoes[qtdAtual-1] + " pontos");
+    }
 }
