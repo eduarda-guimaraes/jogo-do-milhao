@@ -5,6 +5,10 @@ import java.util.Random;
 
 public class JogoDoMilhao {
 
+    // F9: constantes final são permitidas (não são variáveis globais)
+    public static final int PONTOS_POR_ACERTO = 125;
+    public static final int JOGADOR_NAO_ENCONTRADO = -1;
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int opcaoMenu = 0;
@@ -24,20 +28,21 @@ public class JogoDoMilhao {
                     int pontosFinais = jogar(sc);
                     qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
 
-                    // Ordena e exibe a classificação ao final da partida
+                    // F7: ordena o ranking (a alteração aparece aqui porque vetores são passados por referência)
                     ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
-                    System.out.println(classificarJogador(pontosFinais));
+                    // J5: classificação em faixas + dica de acordo com o desempenho
+                    exibirClassificacao(pontosFinais);
                     break;
                 case 2:
                     mostrarComoJogar();
                     break;
                 case 3:
-                    // Exibe o ranking de forma ordenada
+                    // F7: exibe o ranking sempre ordenado
                     ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
                     exibirRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
                     break;
                 case 4:
-                    System.out.println("Saindo do Jogo do Milhão. Obrigado por jogar e evitar o desperdício!");
+                    mostrarDespedida();
                     break;
             }
         }while(opcaoMenu != 4);
@@ -51,6 +56,7 @@ public class JogoDoMilhao {
       Retorno: int (a opção validada escolhida pelo jogador)
       Autor: Eduarda Guimarães
      */
+    // J1, F3 (retorno), F5 (reutiliza a leitura validada)
     public static int exibirMenuPrincipal(Scanner sc) {
         System.out.println("-- Jogo do Milhão \uD83C\uDF3D --");
         System.out.println("Você sabe como evitar o desperdício de alimentos?");
@@ -65,9 +71,10 @@ public class JogoDoMilhao {
     /*
       O que faz: Lê a entrada do usuário garantindo que seja um número inteiro dentro dos limites informados.
       Parâmetros: Scanner sc, int min, int max
-      Retorno: int
+      Retorno: int (o número válido digitado)
       Autor: Eduarda Guimarães
      */
+    // F5: única função de leitura com validação, usada no menu, nas respostas e no código do jogador
     public static int lerEntradaValida(Scanner sc, int min, int max) {
         int opcao = 0;
         boolean entradaValida = false;
@@ -90,11 +97,12 @@ public class JogoDoMilhao {
     }
 
     /*
-      O que faz: Controla o loop das 8 situações do jogo, chamando as perguntas e calculando os pontos.
+      O que faz: Controla o loop das 8 situações do jogo, chamando as perguntas, as explicações e calculando os pontos.
       Parâmetros: Scanner sc
-      Retorno: int
-      Autores: Equipe (Bruno e Gabriel)
+      Retorno: int (a pontuação final da partida)
+      Autor: Bruno Kaefer e Gabriel Presotto
      */
+    // J2: situações guardadas em vetores (texto, opções, resposta certa e explicação)
     public static int jogar(Scanner sc){
         String[] perguntas = {
                 "Ao jogar comida no lixo, o que mais se perde junto com ela?",
@@ -107,44 +115,35 @@ public class JogoDoMilhao {
                 "Quando a cadeia do frio (refrigeração) do alimento é quebrada, o que acontece?"
         };
 
+        // a posição da resposta certa varia de propósito, para o jogador não decorar um padrão
         String[][] opcoes = {
                 {"1 - Só o dinheiro", "2 - Água, solo e energia usados na produção", "3 - Apenas espaço no lixo"},
-                {"1 - Verdade, no mercado eu lembro", "2 - Mito, planejar evita compras repetidas e desperdício"},
+                {"1 - Mito, planejar evita compras repetidas e desperdício", "2 - Verdade, no mercado eu lembro"},
                 {"1 - Oxigênio", "2 - Gás Carbônico", "3 - Gás Etileno"},
                 {"1 - Primeiro que Vence, Primeiro que Sai", "2 - Pagar a Vista Para Sobrar", "3 - Produtos Verdes Para Saladas"},
-                {"1 - Sim, já estragou", "2 - Não, pode ser congelada ou virar doce/bolo"},
+                {"1 - Não, pode ser congelada ou virar doce/bolo", "2 - Sim, já estragou"},
                 {"1 - 6 horas", "2 - 12 horas", "3 - 2 horas"},
-                {"1 - Ordem alfabética", "2 - Do maior para o menor em quantidade", "3 - Do mais barato para o mais caro"},
+                {"1 - Do maior para o menor em quantidade", "2 - Ordem alfabética", "3 - Do mais barato para o mais caro"},
                 {"1 - Nada, se colocar na geladeira depois", "2 - A validade deixa de valer e pode estragar antes"}
         };
 
-        int[] respostasCertas = {2, 2, 3, 1, 2, 3, 2, 2};
+        int[] respostasCertas = {2, 1, 3, 1, 1, 3, 1, 2};
 
+        // J4: explicação de cada situação, cada uma com sua fonte (CONFIRMEM as fontes antes de entregar)
         String[] explicacoes = {
                 "O desperdício tem um impacto invisível: gasta os recursos naturais do planeta (Fonte: FAO).",
-                "Mito! Planejar o cardápio evita comprar por impulso o que você já tem em casa.",
-                "É o gás etileno! Separe as bananas maduras das outras hortaliças para elas durarem mais.",
-                "O que vence primeiro deve ficar na frente na geladeira para ser consumido logo.",
+                "Mito! Planejar o cardápio evita comprar por impulso o que você já tem em casa (Fonte: Guia Alimentar para a População Brasileira, Ministério da Saúde).",
+                "É o gás etileno! Separe as bananas maduras das outras frutas e hortaliças para elas durarem mais (Fonte: Embrapa).",
+                "O que vence primeiro deve ficar na frente da despensa para ser consumido logo (Fonte: SEBRAE).",
                 "Fruta madura não é lixo! Use o aproveitamento integral (Fonte: CEASA).",
-                "Deixar a comida mais de 2h fora da geladeira aumenta o risco de bactérias.",
-                "O primeiro ingrediente listado é o que tem em maior quantidade no produto.",
-                "Quebrar a cadeia do frio compromete a segurança da comida."
+                "Deixar a comida mais de 2h fora da geladeira aumenta o risco de bactérias (Fonte: ANVISA).",
+                "O primeiro ingrediente listado é o que tem em maior quantidade no produto (Fonte: ANVISA).",
+                "Quebrar a cadeia do frio compromete a segurança da comida (Fonte: ANVISA)."
         };
 
         // vetor de índices para embaralhar as perguntas sem alterar os vetores originais
-        int[] indices = new int[perguntas.length];
-        for (int i = 0; i < indices.length; i++) {
-            indices[i] = i;
-        }
-
-        // embaralha os índices usando Random
-        Random rand = new Random();
-        for (int i = 0; i < indices.length; i++) {
-            int randomIndex = rand.nextInt(indices.length);
-            int temp = indices[i];
-            indices[i] = indices[randomIndex];
-            indices[randomIndex] = temp;
-        }
+        int[] indices = criarIndicesSituacoes(perguntas.length);
+        embaralharSituacoes(indices);
 
         int pontuacao = 0;
 
@@ -155,15 +154,59 @@ public class JogoDoMilhao {
             mostrarSituacao(perguntas[atual], opcoes[atual], i);
 
             System.out.print("Sua resposta: ");
+            // F5: mesma função de leitura validada do menu, agora com os limites das opções
             int resposta = lerEntradaValida(sc, 1, opcoes[atual].length);
 
-            pontuacao = atualizarPontuacao(pontuacao, resposta, respostasCertas[atual], explicacoes, atual);
+            boolean acertou = verificarResposta(resposta, respostasCertas[atual]);
+            // J4: mensagem curta explicando por que a escolha é boa ou ruim
+            mostrarExplicacao(acertou, explicacoes[atual]);
+            // J3: recebe os pontos atuais e devolve os novos
+            pontuacao = atualizarPontosDesperdicio(pontuacao, acertou);
         }
 
         System.out.println("\n🎉 FIM DA SEMANA! Sua pontuação final foi: " + pontuacao);
         return pontuacao;
     }
 
+    /*
+      O que faz: Cria o vetor de índices (0, 1, 2...) que representa a ordem das situações do jogo.
+      Parâmetros: int qtdSituacoes
+      Retorno: int[] (vetor com os índices em ordem crescente)
+      Autor: Bruno Kaefer e Gabriel Presotto
+     */
+    // F3 (retorno)
+    public static int[] criarIndicesSituacoes(int qtdSituacoes) {
+        int[] indices = new int[qtdSituacoes];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = i;
+        }
+        return indices;
+    }
+
+    /*
+      O que faz: Embaralha a ordem das situações trocando as posições do vetor de índices (Fisher-Yates).
+      Parâmetros: int[] indices (vetor alterado diretamente, sem retorno)
+      Retorno: void
+      Autor: Eduarda Guimarães
+     */
+    // F3 (void), F4 (recebe vetor como parâmetro)
+    public static void embaralharSituacoes(int[] indices) {
+        Random rand = new Random();
+        for (int i = indices.length - 1; i > 0; i--) {
+            int sorteado = rand.nextInt(i + 1);
+            int temp = indices[i];
+            indices[i] = indices[sorteado];
+            indices[sorteado] = temp;
+        }
+    }
+
+    /*
+      O que faz: Mostra na tela as instruções de como jogar.
+      Parâmetros: nenhum
+      Retorno: void
+      Autor: Bruno Kaefer
+     */
+    // F3 (void)
     public static void mostrarComoJogar(){
         System.out.println("\nCOMO JOGAR: ");
         System.out.println("O jogo consiste de 8 desafios (perguntas) diversos ");
@@ -178,6 +221,13 @@ public class JogoDoMilhao {
         System.out.println("--------------------------------------------------");
     }
 
+    /*
+      O que faz: Mostra na tela a pergunta da rodada e as alternativas de resposta.
+      Parâmetros: String pergunta, String[] opcoes, int rodada
+      Retorno: void
+      Autor: Bruno Kaefer
+     */
+    // F3 (void), F4 (recebe vetor como parâmetro)
     public static void mostrarSituacao(String pergunta, String[] opcoes, int rodada) {
         System.out.println("\n--------------------------------------------------");
         System.out.println("Pergunta " + (rodada + 1) + ": " + pergunta);
@@ -188,23 +238,206 @@ public class JogoDoMilhao {
         System.out.println("--------------------------------------------------");
     }
 
-    public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
-        int auxInt = 0;
-        String auxString = "";
-        for(int j = qtdAtual; j > 1; j--) {
-            for(int i = 0; i < (j-1); i++) {
-                if(pontuacoes[i] < pontuacoes[i+1]) {
-                    auxInt = pontuacoes[i];
-                    pontuacoes[i] = pontuacoes[i+1];
-                    pontuacoes[i+1] = auxInt;
-                    auxString = codigos[i];
-                    codigos[i] = codigos[i+1];
-                    codigos[i+1] = auxString;
-                }
-            }
+    /*
+      O que faz: Compara a escolha do jogador com a alternativa correta da situação.
+      Parâmetros: int escolha, int correta
+      Retorno: boolean (true se o jogador acertou)
+      Autor: Gabriel Presotto
+     */
+    // F3 (retorno boolean)
+    public static boolean verificarResposta(int escolha, int correta) {
+        return escolha == correta;
+    }
+
+    /*
+      O que faz: Mostra a mensagem curta que explica por que a escolha foi boa ou ruim.
+      Parâmetros: boolean acertou, String explicacao
+      Retorno: void
+      Autor: Gabriel Presotto
+     */
+    // J4, F3 (void)
+    public static void mostrarExplicacao(boolean acertou, String explicacao) {
+        if (acertou) {
+            System.out.println("Boa! " + explicacao);
+        } else {
+            System.out.println("Atenção! " + explicacao);
         }
     }
 
+    /*
+      O que faz: Atualiza os pontos do jogador: soma os pontos de um acerto ou mantém o valor em caso de erro.
+      Parâmetros: int pontosAtuais, boolean acertou
+      Retorno: int (os pontos atualizados)
+      Autor: Gabriel Presotto
+     */
+    // J3, F3 (retorno)
+    public static int atualizarPontosDesperdicio(int pontosAtuais, boolean acertou){
+        if (acertou){
+            return pontosAtuais + PONTOS_POR_ACERTO;
+        }
+        return pontosAtuais;
+    }
+
+    /*
+      O que faz: Define a faixa do jogador de acordo com a pontuação final.
+      Parâmetros: int pontuacaoFinal
+      Retorno: String (nome da faixa: Exemplar, Consciente ou Iniciante)
+      Autor: Gabriel Presotto
+     */
+    // J5, F3 (retorno String)
+    public static String classificarConsumidor(int pontuacaoFinal){
+        if (pontuacaoFinal >= 800) return "Exemplar";
+        if (pontuacaoFinal >= 500) return "Consciente";
+        return "Iniciante";
+    }
+
+    /*
+      O que faz: Escolhe a dica final de acordo com a faixa do jogador.
+      Parâmetros: String faixa
+      Retorno: String (a dica correspondente à faixa)
+      Autor: Gabriel Presotto
+     */
+    // J5, F3 (retorno String)
+    public static String gerarDicaDesperdicio(String faixa){
+        if (faixa.equals("Exemplar")) return "Você domina o aproveitamento integral!";
+        if (faixa.equals("Consciente")) return "Bom caminho, revise a validade dos itens.";
+        return "Planeje sua lista antes de ir ao mercado!";
+    }
+
+    /*
+      O que faz: Mostra na tela a faixa do jogador e a dica de acordo com o desempenho.
+      Parâmetros: int pontuacaoFinal
+      Retorno: void
+      Autor: Gabriel Presotto
+     */
+    // J5, F3 (void)
+    public static void exibirClassificacao(int pontuacaoFinal) {
+        String faixa = classificarConsumidor(pontuacaoFinal);
+        System.out.println("\nClassificação - " + faixa + ": " + gerarDicaDesperdicio(faixa) + "\n");
+    }
+
+    /*
+      O que faz: Transforma o número escolhido pelo jogador em um código anônimo (ex: 1 vira P01, 12 vira P12).
+      Parâmetros: int numero
+      Retorno: String (o código do jogador)
+      Autor: Luiz Gabriel Lauck
+     */
+    // F3 (retorno String); código anônimo para respeitar a LGPD
+    public static String formatarCodigoJogador(int numero) {
+        if (numero < 10) {
+            return "P0" + numero;
+        }
+        return "P" + numero;
+    }
+
+    /*
+      O que faz: Procura um jogador no ranking pelo código.
+      Parâmetros: String[] codigos, int qtdAtual, String codigoBuscado
+      Retorno: int (a posição do jogador no vetor, ou JOGADOR_NAO_ENCONTRADO (-1) se o código não existir)
+      Autor: Luiz Gabriel Lauck
+     */
+    // F6, F3 (retorno), F4 (recebe vetor como parâmetro)
+    public static int buscarJogador(String[] codigos, int qtdAtual, String codigoBuscado) {
+        for (int i = 0; i < qtdAtual; i++) {
+            if (codigos[i].equals(codigoBuscado)) {
+                return i;
+            }
+        }
+        return JOGADOR_NAO_ENCONTRADO;
+    }
+
+    /*
+      O que faz: Salva o código do jogador e a pontuação final no ranking; se o código já existir, mantém a maior pontuação.
+      Parâmetros: String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc
+      Retorno: int (a quantidade de jogadores após a tentativa de salvar)
+      Autor: Luiz Gabriel Lauck
+     */
+    // J6, F4 (recebe vetores como parâmetro), F8 (vetores relacionados pela mesma posição)
+    public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
+        System.out.println("Escolha o número do seu código de jogador (1 a 99, ex: 1 vira P01): ");
+        // F5: mesma leitura validada do menu e das respostas
+        int numero = lerEntradaValida(sc, 1, 99);
+        String codigo = formatarCodigoJogador(numero);
+
+        // F6: busca o código no ranking antes de criar um novo registro
+        int posicao = buscarJogador(codigos, qtdAtual, codigo);
+        if (posicao != JOGADOR_NAO_ENCONTRADO) {
+            if (pontosFinais > pontuacoes[posicao]) {
+                pontuacoes[posicao] = pontosFinais;
+                System.out.println("Novo recorde para " + codigo + "! Pontuação atualizada.");
+            } else {
+                System.out.println("O código " + codigo + " já tem pontuação maior ou igual no ranking.");
+            }
+            return qtdAtual;
+        }
+
+        if (qtdAtual >= codigos.length || qtdAtual >= pontuacoes.length) {
+            System.out.println("O ranking está cheio. A partida não foi salva.");
+            return qtdAtual;
+        }
+
+        codigos[qtdAtual] = codigo;
+        pontuacoes[qtdAtual] = pontosFinais;
+        System.out.println("Partida salva com sucesso! Seu código é " + codigo + ".");
+        return qtdAtual + 1;
+    }
+
+    /*
+      O que faz: Ordena o ranking da maior para a menor pontuação (ordenação por seleção): em cada posição,
+                 procura a maior pontuação do restante do vetor e troca, movendo os dois vetores juntos.
+      Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
+      Retorno: void (os vetores originais são alterados diretamente)
+      Autor: Vitor Soares
+     */
+    // F7: ordenação sem funções prontas; a alteração aparece fora da função porque o vetor é passado por referência
+    // F3 (void), F4 (recebe vetores como parâmetro), F8 (os dois vetores são trocados na mesma posição)
+    public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
+        for (int i = 0; i < qtdAtual - 1; i++) {
+            // procura a posição da maior pontuação entre i e o final
+            int posicaoMaior = i;
+            for (int j = i + 1; j < qtdAtual; j++) {
+                if (pontuacoes[j] > pontuacoes[posicaoMaior]) {
+                    posicaoMaior = j;
+                }
+            }
+
+            // troca a pontuação e o código juntos para os vetores continuarem relacionados
+            int auxPontos = pontuacoes[i];
+            pontuacoes[i] = pontuacoes[posicaoMaior];
+            pontuacoes[posicaoMaior] = auxPontos;
+
+            String auxCodigo = codigos[i];
+            codigos[i] = codigos[posicaoMaior];
+            codigos[posicaoMaior] = auxCodigo;
+        }
+    }
+
+    /*
+      O que faz: Calcula a média das pontuações guardadas no ranking, sem função pronta de soma ou média.
+      Parâmetros: int[] pontuacoes, int qtdAtual
+      Retorno: double (a média das pontuações, ou 0 se não houver jogadores)
+      Autor: Vitor Soares
+     */
+    // J6 (média), F3 (retorno double), F4 (recebe vetor como parâmetro)
+    public static double calcularMediaPontuacao(int[] pontuacoes, int qtdAtual) {
+        if (qtdAtual == 0) {
+            return 0;
+        }
+        double somaPontos = 0;
+        for (int i = 0; i < qtdAtual; i++) {
+            somaPontos += pontuacoes[i];
+        }
+        return somaPontos / qtdAtual;
+    }
+
+    /*
+      O que faz: Mostra o ranking em ordem, com empates, a média, a maior e a menor pontuação.
+                 Importante: usa a posição 0 como maior e a última como menor, então o ranking precisa estar ordenado antes.
+      Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
+      Retorno: void
+      Autor: Vitor Soares
+     */
+    // J6 (ordem, maior, menor e média), F3 (void), F4 (recebe vetores como parâmetro)
     public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
         System.out.println("\nRanking Final 🏆");
         if(qtdAtual == 0) {
@@ -212,11 +445,9 @@ public class JogoDoMilhao {
             return;
         }
 
-        float soma = 0;
         int posicaoReal = 1;
 
         for(int i = 0; i < qtdAtual; i++) {
-            soma += pontuacoes[i];
             // se não for o primeiro jogador e a pontuação for diferente da do anterior, atualiza a posição
             if (i > 0 && pontuacoes[i] != pontuacoes[i - 1]) {
                 posicaoReal = i + 1;
@@ -227,44 +458,19 @@ public class JogoDoMilhao {
                 System.out.println(posicaoReal + "° Lugar: " + codigos[i] + " - " + pontuacoes[i] + " pontos");
             }
         }
-        System.out.printf("A pontuação média da sessão foi de: %.2f pontos%n", (soma/qtdAtual));
+        System.out.printf("A pontuação média da sessão foi de: %.2f pontos%n", calcularMediaPontuacao(pontuacoes, qtdAtual));
         System.out.println("A maior pontuação foi de: " + codigos[0] + " com um total de " + pontuacoes[0] + " pontos");
         System.out.println("A menor pontuação foi de: " + codigos[qtdAtual-1] + " com um total de " + pontuacoes[qtdAtual-1] + " pontos\n");
     }
 
-    public static int atualizarPontuacao(int pontosAtuais, int escolha, int correta, String[] dicas, int rodada){
-        if (escolha == correta){
-            System.out.println("Boa! " + dicas[rodada]);
-            return pontosAtuais + 125;
-        }
-
-        System.out.println("Atenção! " + dicas[rodada]);
-        return pontosAtuais;
-    }
-
-    public static String classificarJogador(int pontuacaoFinal){
-        if (pontuacaoFinal >= 800) return "\nClassificação - Exemplar: Você domina o aproveitamento integral!\n";
-        if (pontuacaoFinal >= 500) return "\nClassificação - Consciente: Bom caminho, revise a validade dos itens.\n";
-        return "\nClassificação - Iniciante: Planeje sua lista antes de ir ao mercado!\n";
-    }
-
     /*
-      O que faz: Salva o código do jogador e a pontuação final no ranking.
-      Retorno: int (a quantidade de jogadores após a tentativa de salvar)
-      Autor: Luiz
+      O que faz: Mostra a mensagem de despedida ao sair do jogo.
+      Parâmetros: nenhum
+      Retorno: void
+      Autor: Eduarda Guimarães
      */
-    public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
-        if (qtdAtual >= codigos.length || qtdAtual >= pontuacoes.length) {
-            System.out.println("O ranking está cheio. A partida não foi salva.");
-            return qtdAtual;
-        }
-
-        System.out.print("Digite seu código de jogador (ex: P01): ");
-        String codigo = sc.nextLine();
-
-        codigos[qtdAtual] = codigo;
-        pontuacoes[qtdAtual] = pontosFinais;
-        System.out.println("Partida salva com sucesso!");
-        return qtdAtual + 1;
+    // F1 (tira o println do main), F3 (void)
+    public static void mostrarDespedida() {
+        System.out.println("Saindo do Jogo do Milhão. Obrigado por jogar e evitar o desperdício!");
     }
 }
