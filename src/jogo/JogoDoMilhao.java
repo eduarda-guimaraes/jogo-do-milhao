@@ -25,6 +25,9 @@ public class JogoDoMilhao {
 
                     // Luiz: criar a função salvarPartida e descomentar a linha abaixo
                     // qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
+
+                    // Exemplo temporário para testar a classificação ao final da partida:
+                    System.out.println(classificarJogador(pontosFinais));
                     break;
                 case 2:
                     mostrarComoJogar();
@@ -49,8 +52,6 @@ public class JogoDoMilhao {
       Retorno: int (a opção validada escolhida pelo jogador)
       Autor: Eduarda Guimarães
      */
-    // J1: imprime os textos das 4 opções iniciais obrigatórias
-    // F3: função com retorno devolvendo um int para o main
     public static int exibirMenuPrincipal(Scanner sc) {
         System.out.println("-- Jogo do Milhão \uD83C\uDF3D --");
         System.out.println("Você sabe como evitar o desperdício de alimentos?");
@@ -64,12 +65,10 @@ public class JogoDoMilhao {
 
     /*
       O que faz: Lê a entrada do usuário garantindo que seja um número inteiro dentro dos limites informados.
-      Parâmetros: Scanner sc, int min (valor mínimo aceito), int max (valor máximo aceito)
-      Retorno: int (o número válido digitado)
+      Parâmetros: Scanner sc, int min, int max
+      Retorno: int
       Autor: Eduarda Guimarães
      */
-    // F5: única função de leitura com validação por parâmetros
-    // F3: função com retorno devolvendo um int para exibirMenuPrincipal
     public static int lerEntradaValida(Scanner sc, int min, int max) {
         int opcao = 0;
         boolean entradaValida = false;
@@ -95,12 +94,10 @@ public class JogoDoMilhao {
     /*
       O que faz: Controla o loop das 8 situações do jogo, chamando as perguntas e calculando os pontos.
       Parâmetros: Scanner sc
-      Retorno: void
+      Retorno: int
       Autores: Equipe (Bruno e Gabriel)
      */
-    // J2: 8 situações baseadas no diagnóstico guardadas em vetores
     public static int jogar(Scanner sc){
-        // Vetor 1: as 8 perguntas do diagnóstico
         String[] perguntas = {
                 "Ao jogar comida no lixo, o que mais se perde junto com ela?",
                 "Fazer lista de compras e olhar o que já tem em casa é perda de tempo?",
@@ -112,7 +109,6 @@ public class JogoDoMilhao {
                 "Quando a cadeia do frio (refrigeração) do alimento é quebrada, o que acontece?"
         };
 
-        // Vetor 2 (Matriz): as opções de cada pergunta (cada linha é uma pergunta)
         String[][] opcoes = {
                 {"1 - Só o dinheiro", "2 - Água, solo e energia usados na produção", "3 - Apenas espaço no lixo"},
                 {"1 - Verdade, no mercado eu lembro", "2 - Mito, planejar evita compras repetidas e desperdício"},
@@ -124,10 +120,8 @@ public class JogoDoMilhao {
                 {"1 - Nada, se colocar na geladeira depois", "2 - A validade deixa de valer e pode estragar antes"}
         };
 
-        // Vetor 3: o gabarito (qual é o número da resposta certa de cada uma)
         int[] respostasCertas = {2, 2, 3, 1, 2, 3, 2, 2};
 
-        // Vetor 4: a conscientização (regra J4)
         String[] explicacoes = {
                 "O desperdício tem um impacto invisível: gasta os recursos naturais do planeta (Fonte: FAO).",
                 "Mito! Planejar o cardápio evita comprar por impulso o que você já tem em casa.",
@@ -139,7 +133,6 @@ public class JogoDoMilhao {
                 "Quebrar a cadeia do frio compromete a segurança da comida."
         };
 
-        // começa o jogo com 0 pontos
         int pontuacao = 0;
 
         System.out.println("\n=== INICIANDO A SEMANA SEM DESPERDÍCIO ===");
@@ -150,28 +143,13 @@ public class JogoDoMilhao {
             System.out.print("Sua resposta: ");
             int resposta = lerEntradaValida(sc, 1, opcoes[i].length);
 
-            // Gabriel: criar a função atualizarPontuacao e descomentar a linha abaixo
-            // pontuacao = atualizarPontuacao(pontuacao, resposta, respostasCertas[i], explicacoes[i]);
+            pontuacao = atualizarPontuacao(pontuacao, resposta, respostasCertas[i], explicacoes, i);
         }
 
         System.out.println("\n🎉 FIM DA SEMANA! Sua pontuação final foi: " + pontuacao);
-
-        // retorna os pontos para o main, onde o Luiz vai pegar para salvar
         return pontuacao;
     }
 
-    // =========================================================================
-    // ÁREA DOS COLEGAS: ESTRUTURAS VAZIAS PARA ELES PREENCHEREM A LÓGICA
-    // =========================================================================
-
-    /*
-      O que faz: Exibe as regras e instruções de como jogar o Jogo do Milhão.
-      Parâmetros: nenhum
-      Retorno: void
-      Autor: Bruno Leonardo
-     */
-    // J1: imprime na tela a descrição de como jogar
-    // F3: função com retorno void
     public static void mostrarComoJogar(){
         System.out.println("\nCOMO JOGAR: ");
         System.out.println("O jogo consiste de 8 desafios (perguntas) diversos ");
@@ -179,40 +157,23 @@ public class JogoDoMilhao {
         System.out.println("Desafios como:");
         System.out.println(" • Múltipla escolha — uma alternativa está certa");
         System.out.println(" • Verdade ou mito — julgue a afirmação");
-        System.out.println("Cada acerto soma 100 pontos!");
+        System.out.println("Cada acerto soma pontos!");
         System.out.println("No final será gerado um ranking anônimo dos usuários.");
         System.out.println("Cada pergunta terá uma explicação confiável!");
         System.out.println("O jogo tem como intuito conscientizar as pessoas sobre a causa!");
         System.out.println("--------------------------------------------------");
     }
 
-    /*
-      O que faz: Imprime a pergunta atual e faz um laço para exibir as alternativas formatadas.
-      Parâmetros: String pergunta, String[] opcoes, int rodada
-      Retorno: void
-      Autor: Bruno Leonardo
-     */
-    // J2: exibe situações do diagnóstico
-    // F4: recebe um vetor de Strings (opcoes) como parâmetro
-    // F3: função com retorno void
     public static void mostrarSituacao(String pergunta, String[] opcoes, int rodada) {
         System.out.println("\n--------------------------------------------------");
         System.out.println("Pergunta " + (rodada + 1) + ": " + pergunta);
 
-        // Percorre o vetor de opções correspondente à rodada atual para exibir as alternativas
         for (int i = 0; i < opcoes.length; i++) {
             System.out.println(opcoes[i]);
         }
         System.out.println("--------------------------------------------------");
     }
 
-    /*
-      O que faz: Ordena os vetores do maior para o menor sem usar funções prontas.
-      Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
-      Retorno: void
-      Autor: Vitor Soares
-     */
-    // F7
     public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
         int auxInt = 0;
         String auxString = "";
@@ -230,13 +191,6 @@ public class JogoDoMilhao {
         }
     }
 
-    /*
-      O que faz: Exibe o ranking, e calcula a maior, menor e média.
-      Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
-      Retorno: void
-      Autor: Vitor Soares
-     */
-    // J6
     public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
         System.out.println("Ranking Final 🏆");
         if(qtdAtual == 0) {
@@ -252,5 +206,21 @@ public class JogoDoMilhao {
         System.out.printf("A pontuação média da sessão foi de: %.2f pontos%n", (soma/qtdAtual));
         System.out.println("A maior pontuação foi de: " + codigos[0] + " com um total de " + pontuacoes[0] + " pontos");
         System.out.println("A menor pontuação foi de: " + codigos[qtdAtual-1] + " com um total de " + pontuacoes[qtdAtual-1] + " pontos");
+    }
+
+    public static int atualizarPontuacao(int pontosAtuais, int escolha, int correta, String[] dicas, int rodada){
+        if (escolha == correta){
+            System.out.println("Boa! " + dicas[rodada]);
+            return pontosAtuais + 125;
+        }
+
+        System.out.println("Atenção! " + dicas[rodada]);
+        return pontosAtuais;
+    }
+
+    public static String classificarJogador(int pontuacaoFinal){
+        if (pontuacaoFinal >= 800) return "Classificação - Exemplar: Você domina o aproveitamento integral!";
+        if (pontuacaoFinal >= 500) return "Classificação - Consciente: Bom caminho, revise a validade dos itens.";
+        return "Classificação - Iniciante: Planeje sua lista antes de ir ao mercado!";
     }
 }
