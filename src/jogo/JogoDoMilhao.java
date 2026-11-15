@@ -23,8 +23,7 @@ public class JogoDoMilhao {
                     // a função jogar agora devolve os pontos, e guardamos na variável
                     int pontosFinais = jogar(sc);
 
-                    // Luiz: criar a função salvarPartida e descomentar a linha abaixo
-                    // qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
+                    qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
 
                     // Exemplo temporário para testar a classificação ao final da partida:
                     System.out.println(classificarJogador(pontosFinais));
@@ -172,6 +171,25 @@ public class JogoDoMilhao {
             System.out.println(opcoes[i]);
         }
         System.out.println("--------------------------------------------------");
+    }
+
+    /*
+      O que faz: Salva o código do jogador e a pontuação final no ranking.
+      Retorno: int (a quantidade de jogadores após a tentativa de salvar)
+      Autor: Luiz
+     */
+    public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
+        if (qtdAtual >= codigos.length || qtdAtual >= pontuacoes.length) {
+            System.out.println("O ranking está cheio. A partida não foi salva.");
+            return qtdAtual;
+        }
+
+        System.out.print("Digite seu código de jogador (ex: P01): ");
+        String codigo = sc.next();
+
+        codigos[qtdAtual] = codigo;
+        pontuacoes[qtdAtual] = pontosFinais;
+        return qtdAtual + 1;
     }
 
     public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
