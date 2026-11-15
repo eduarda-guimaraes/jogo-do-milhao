@@ -1,6 +1,7 @@
 package jogo;
 
 import java.util.Scanner;
+import java.util.Random;
 
 public class JogoDoMilhao {
 
@@ -20,12 +21,11 @@ public class JogoDoMilhao {
 
             switch (opcaoMenu){
                 case 1:
-                    // a função jogar agora devolve os pontos, e guardamos na variável
                     int pontosFinais = jogar(sc);
-
                     qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
 
-                    // Exemplo temporário para testar a classificação ao final da partida:
+                    // Ordena e exibe a classificação ao final da partida
+                    ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
                     System.out.println(classificarJogador(pontosFinais));
                     break;
                 case 2:
@@ -73,18 +73,17 @@ public class JogoDoMilhao {
         boolean entradaValida = false;
 
         while (!entradaValida) {
-            if (sc.hasNextInt()) {
-                opcao = sc.nextInt();
-                if(opcao >= min && opcao <= max){
+            String entrada = sc.nextLine();
+
+            try{
+                opcao = Integer.parseInt(entrada);
+                if (opcao >= min && opcao <= max) {
                     entradaValida = true;
+                } else {
+                    System.out.println("Número inválido! Digite um número inteiro entre " + min + " e " + max + ":");
                 }
-                else{
-                    System.out.println("Número inválido! Digite um número entre "+min+" e "+max+":");
-                }
-            }
-            else{
-                System.out.println("Erro: letras ou caracteres especiais não são aceitos!\nDigite apenas um número entre "+min+" e "+max+":");
-                sc.next();
+            }catch(NumberFormatException e){
+                System.out.println("Erro: letras, decimais ou caracteres especiais não são aceitos!\nDigite apenas um número entre " + min + " e " + max + ":");
             }
         }
         return opcao;
@@ -132,17 +131,33 @@ public class JogoDoMilhao {
                 "Quebrar a cadeia do frio compromete a segurança da comida."
         };
 
+        // vetor de índices para embaralhar as perguntas sem alterar os vetores originais
+        int[] indices = new int[perguntas.length];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = i;
+        }
+
+        // embaralha os índices usando Random
+        Random rand = new Random();
+        for (int i = 0; i < indices.length; i++) {
+            int randomIndex = rand.nextInt(indices.length);
+            int temp = indices[i];
+            indices[i] = indices[randomIndex];
+            indices[randomIndex] = temp;
+        }
+
         int pontuacao = 0;
 
         System.out.println("\n=== INICIANDO A SEMANA SEM DESPERDÍCIO ===");
 
-        for (int i = 0; i < perguntas.length; i++){
-            mostrarSituacao(perguntas[i], opcoes[i], i);
+        for (int i = 0; i < indices.length; i++){
+            int atual = indices[i]; // pega a pergunta aleatória da vez
+            mostrarSituacao(perguntas[atual], opcoes[atual], i);
 
             System.out.print("Sua resposta: ");
-            int resposta = lerEntradaValida(sc, 1, opcoes[i].length);
+            int resposta = lerEntradaValida(sc, 1, opcoes[atual].length);
 
-            pontuacao = atualizarPontuacao(pontuacao, resposta, respostasCertas[i], explicacoes, i);
+            pontuacao = atualizarPontuacao(pontuacao, resposta, respostasCertas[atual], explicacoes, atual);
         }
 
         System.out.println("\n🎉 FIM DA SEMANA! Sua pontuação final foi: " + pontuacao);
@@ -173,25 +188,6 @@ public class JogoDoMilhao {
         System.out.println("--------------------------------------------------");
     }
 
-    /*
-      O que faz: Salva o código do jogador e a pontuação final no ranking.
-      Retorno: int (a quantidade de jogadores após a tentativa de salvar)
-      Autor: Luiz
-     */
-    public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
-        if (qtdAtual >= codigos.length || qtdAtual >= pontuacoes.length) {
-            System.out.println("O ranking está cheio. A partida não foi salva.");
-            return qtdAtual;
-        }
-
-        System.out.print("Digite seu código de jogador (ex: P01): ");
-        String codigo = sc.next();
-
-        codigos[qtdAtual] = codigo;
-        pontuacoes[qtdAtual] = pontosFinais;
-        return qtdAtual + 1;
-    }
-
     public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
         int auxInt = 0;
         String auxString = "";
@@ -210,20 +206,30 @@ public class JogoDoMilhao {
     }
 
     public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
-        System.out.println("Ranking Final 🏆");
+        System.out.println("\nRanking Final 🏆");
         if(qtdAtual == 0) {
-            System.out.println("Ainda não há jogadores no ranking.");
+            System.out.println("Ainda não há jogadores no ranking.\n");
             return;
         }
 
         float soma = 0;
+        int posicaoReal = 1;
+
         for(int i = 0; i < qtdAtual; i++) {
             soma += pontuacoes[i];
-            System.out.println((i+1) + "° Lugar: " + codigos[i] + " - " + pontuacoes[i] + " pontos");
+            // se não for o primeiro jogador e a pontuação for diferente da do anterior, atualiza a posição
+            if (i > 0 && pontuacoes[i] != pontuacoes[i - 1]) {
+                posicaoReal = i + 1;
+            }
+            if (i > 0 && pontuacoes[i] == pontuacoes[i - 1]) {
+                System.out.println(posicaoReal + "° Lugar (Empate): " + codigos[i] + " - " + pontuacoes[i] + " pontos");
+            } else {
+                System.out.println(posicaoReal + "° Lugar: " + codigos[i] + " - " + pontuacoes[i] + " pontos");
+            }
         }
         System.out.printf("A pontuação média da sessão foi de: %.2f pontos%n", (soma/qtdAtual));
         System.out.println("A maior pontuação foi de: " + codigos[0] + " com um total de " + pontuacoes[0] + " pontos");
-        System.out.println("A menor pontuação foi de: " + codigos[qtdAtual-1] + " com um total de " + pontuacoes[qtdAtual-1] + " pontos");
+        System.out.println("A menor pontuação foi de: " + codigos[qtdAtual-1] + " com um total de " + pontuacoes[qtdAtual-1] + " pontos\n");
     }
 
     public static int atualizarPontuacao(int pontosAtuais, int escolha, int correta, String[] dicas, int rodada){
@@ -237,8 +243,28 @@ public class JogoDoMilhao {
     }
 
     public static String classificarJogador(int pontuacaoFinal){
-        if (pontuacaoFinal >= 800) return "Classificação - Exemplar: Você domina o aproveitamento integral!";
-        if (pontuacaoFinal >= 500) return "Classificação - Consciente: Bom caminho, revise a validade dos itens.";
-        return "Classificação - Iniciante: Planeje sua lista antes de ir ao mercado!";
+        if (pontuacaoFinal >= 800) return "\nClassificação - Exemplar: Você domina o aproveitamento integral!\n";
+        if (pontuacaoFinal >= 500) return "\nClassificação - Consciente: Bom caminho, revise a validade dos itens.\n";
+        return "\nClassificação - Iniciante: Planeje sua lista antes de ir ao mercado!\n";
+    }
+
+    /*
+      O que faz: Salva o código do jogador e a pontuação final no ranking.
+      Retorno: int (a quantidade de jogadores após a tentativa de salvar)
+      Autor: Luiz
+     */
+    public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
+        if (qtdAtual >= codigos.length || qtdAtual >= pontuacoes.length) {
+            System.out.println("O ranking está cheio. A partida não foi salva.");
+            return qtdAtual;
+        }
+
+        System.out.print("Digite seu código de jogador (ex: P01): ");
+        String codigo = sc.nextLine();
+
+        codigos[qtdAtual] = codigo;
+        pontuacoes[qtdAtual] = pontosFinais;
+        System.out.println("Partida salva com sucesso!");
+        return qtdAtual + 1;
     }
 }
