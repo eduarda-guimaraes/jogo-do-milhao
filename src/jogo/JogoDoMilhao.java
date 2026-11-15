@@ -5,15 +5,12 @@ import java.util.Random;
 
 public class JogoDoMilhao {
 
-    // F9: constantes final são permitidas (não são variáveis globais)
-    public static final int PONTOS_POR_ACERTO = 125;
-    public static final int JOGADOR_NAO_ENCONTRADO = -1;
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int opcaoMenu = 0;
 
         // F8: pelo menos 2 vetores relacionados (declarados no main para respeitar a regra F9 sem globais)
+        // F9: sem variáveis globais; os dados circulam por parâmetros e retornos
         String[] codigosRanking = new String[50];
         int[] pontuacoesRanking = new int[50];
         int qtdJogadores = 0; // controla quantas pessoas já jogaram
@@ -26,7 +23,7 @@ public class JogoDoMilhao {
             switch (opcaoMenu){
                 case 1:
                     int pontosFinais = jogar(sc);
-                    qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);
+                    qtdJogadores = salvarPartida(codigosRanking, pontuacoesRanking, pontosFinais, qtdJogadores, sc);  // J6: guarda código e pontuação da partida
 
                     // F7: ordena o ranking (a alteração aparece aqui porque vetores são passados por referência)
                     ordenarRanking(codigosRanking, pontuacoesRanking, qtdJogadores);
@@ -115,7 +112,6 @@ public class JogoDoMilhao {
                 "Quando a cadeia do frio (refrigeração) do alimento é quebrada, o que acontece?"
         };
 
-        // a posição da resposta certa varia de propósito, para o jogador não decorar um padrão
         String[][] opcoes = {
                 {"1 - Só o dinheiro", "2 - Água, solo e energia usados na produção", "3 - Apenas espaço no lixo"},
                 {"1 - Mito, planejar evita compras repetidas e desperdício", "2 - Verdade, no mercado eu lembro"},
@@ -129,7 +125,7 @@ public class JogoDoMilhao {
 
         int[] respostasCertas = {2, 1, 3, 1, 1, 3, 1, 2};
 
-        // J4: explicação de cada situação, cada uma com sua fonte (CONFIRMEM as fontes antes de entregar)
+        // J4: explicação de cada situação, cada uma com sua fonte
         String[] explicacoes = {
                 "O desperdício tem um impacto invisível: gasta os recursos naturais do planeta (Fonte: FAO).",
                 "Mito! Planejar o cardápio evita comprar por impulso o que você já tem em casa (Fonte: Guia Alimentar para a População Brasileira, Ministério da Saúde).",
@@ -150,18 +146,15 @@ public class JogoDoMilhao {
         System.out.println("\n=== INICIANDO A SEMANA SEM DESPERDÍCIO ===");
 
         for (int i = 0; i < indices.length; i++){
-            int atual = indices[i]; // pega a pergunta aleatória da vez
+            int atual = indices[i];
             mostrarSituacao(perguntas[atual], opcoes[atual], i);
 
             System.out.print("Sua resposta: ");
-            // F5: mesma função de leitura validada do menu, agora com os limites das opções
-            int resposta = lerEntradaValida(sc, 1, opcoes[atual].length);
+            int resposta = lerEntradaValida(sc, 1, opcoes[atual].length);  // F5: mesma leitura validada do menu
 
             boolean acertou = verificarResposta(resposta, respostasCertas[atual]);
-            // J4: mensagem curta explicando por que a escolha é boa ou ruim
-            mostrarExplicacao(acertou, explicacoes[atual]);
-            // J3: recebe os pontos atuais e devolve os novos
-            pontuacao = atualizarPontosDesperdicio(pontuacao, acertou);
+            mostrarExplicacao(acertou, explicacoes[atual]);  // J4: explica por que a escolha é boa ou ruim
+            pontuacao = atualizarPontosDesperdicio(pontuacao, acertou);  // J3: recebe os pontos atuais e devolve os novos
         }
 
         System.out.println("\n🎉 FIM DA SEMANA! Sua pontuação final foi: " + pontuacao);
@@ -174,7 +167,6 @@ public class JogoDoMilhao {
       Retorno: int[] (vetor com os índices em ordem crescente)
       Autor: Bruno Kaefer e Gabriel Presotto
      */
-    // F3 (retorno)
     public static int[] criarIndicesSituacoes(int qtdSituacoes) {
         int[] indices = new int[qtdSituacoes];
         for (int i = 0; i < indices.length; i++) {
@@ -270,10 +262,10 @@ public class JogoDoMilhao {
       Retorno: int (os pontos atualizados)
       Autor: Gabriel Presotto
      */
-    // J3, F3 (retorno)
+    // J3: recebe os pontos atuais e devolve os novos; F3 (retorno int)
     public static int atualizarPontosDesperdicio(int pontosAtuais, boolean acertou){
         if (acertou){
-            return pontosAtuais + PONTOS_POR_ACERTO;
+            return pontosAtuais + 125;
         }
         return pontosAtuais;
     }
@@ -333,17 +325,17 @@ public class JogoDoMilhao {
     /*
       O que faz: Procura um jogador no ranking pelo código.
       Parâmetros: String[] codigos, int qtdAtual, String codigoBuscado
-      Retorno: int (a posição do jogador no vetor, ou JOGADOR_NAO_ENCONTRADO (-1) se o código não existir)
+      Retorno: int (a posição do jogador no vetor, ou -1 se o código não existir)
       Autor: Luiz Gabriel Lauck
      */
-    // F6, F3 (retorno), F4 (recebe vetor como parâmetro)
+    // F6: busca por código; devolve a posição ou -1 se não existir; F3 (retorno), F4 (recebe vetor como parâmetro)
     public static int buscarJogador(String[] codigos, int qtdAtual, String codigoBuscado) {
         for (int i = 0; i < qtdAtual; i++) {
             if (codigos[i].equals(codigoBuscado)) {
                 return i;
             }
         }
-        return JOGADOR_NAO_ENCONTRADO;
+        return -1;
     }
 
     /*
@@ -352,16 +344,14 @@ public class JogoDoMilhao {
       Retorno: int (a quantidade de jogadores após a tentativa de salvar)
       Autor: Luiz Gabriel Lauck
      */
-    // J6, F4 (recebe vetores como parâmetro), F8 (vetores relacionados pela mesma posição)
+    // J6: guarda código e pontuação; F4 (recebe vetores como parâmetro), F8 (vetores relacionados pela mesma posição)
     public static int salvarPartida(String[] codigos, int[] pontuacoes, int pontosFinais, int qtdAtual, Scanner sc) {
         System.out.println("Escolha o número do seu código de jogador (1 a 99, ex: 1 vira P01): ");
-        // F5: mesma leitura validada do menu e das respostas
         int numero = lerEntradaValida(sc, 1, 99);
         String codigo = formatarCodigoJogador(numero);
 
-        // F6: busca o código no ranking antes de criar um novo registro
         int posicao = buscarJogador(codigos, qtdAtual, codigo);
-        if (posicao != JOGADOR_NAO_ENCONTRADO) {
+        if (posicao != -1) {
             if (pontosFinais > pontuacoes[posicao]) {
                 pontuacoes[posicao] = pontosFinais;
                 System.out.println("Novo recorde para " + codigo + "! Pontuação atualizada.");
@@ -383,17 +373,15 @@ public class JogoDoMilhao {
     }
 
     /*
-      O que faz: Ordena o ranking da maior para a menor pontuação (ordenação por seleção): em cada posição,
-                 procura a maior pontuação do restante do vetor e troca, movendo os dois vetores juntos.
+      O que faz: Ordena o ranking da maior para a menor pontuação (ordenação por seleção).
       Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
-      Retorno: void (os vetores originais são alterados diretamente)
+      Retorno: void
       Autor: Vitor Soares
      */
     // F7: ordenação sem funções prontas; a alteração aparece fora da função porque o vetor é passado por referência
-    // F3 (void), F4 (recebe vetores como parâmetro), F8 (os dois vetores são trocados na mesma posição)
+    // F3 (void), F4 (recebe vetores como parâmetro), F8 (os dois vetores são trocados juntos)
     public static void ordenarRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
         for (int i = 0; i < qtdAtual - 1; i++) {
-            // procura a posição da maior pontuação entre i e o final
             int posicaoMaior = i;
             for (int j = i + 1; j < qtdAtual; j++) {
                 if (pontuacoes[j] > pontuacoes[posicaoMaior]) {
@@ -401,7 +389,6 @@ public class JogoDoMilhao {
                 }
             }
 
-            // troca a pontuação e o código juntos para os vetores continuarem relacionados
             int auxPontos = pontuacoes[i];
             pontuacoes[i] = pontuacoes[posicaoMaior];
             pontuacoes[posicaoMaior] = auxPontos;
@@ -413,9 +400,9 @@ public class JogoDoMilhao {
     }
 
     /*
-      O que faz: Calcula a média das pontuações guardadas no ranking, sem função pronta de soma ou média.
+      O que faz: Calcula a média das pontuações guardadas no ranking.
       Parâmetros: int[] pontuacoes, int qtdAtual
-      Retorno: double (a média das pontuações, ou 0 se não houver jogadores)
+      Retorno: double
       Autor: Vitor Soares
      */
     // J6 (média), F3 (retorno double), F4 (recebe vetor como parâmetro)
@@ -432,12 +419,12 @@ public class JogoDoMilhao {
 
     /*
       O que faz: Mostra o ranking em ordem, com empates, a média, a maior e a menor pontuação.
-                 Importante: usa a posição 0 como maior e a última como menor, então o ranking precisa estar ordenado antes.
       Parâmetros: String[] codigos, int[] pontuacoes, int qtdAtual
       Retorno: void
       Autor: Vitor Soares
      */
-    // J6 (ordem, maior, menor e média), F3 (void), F4 (recebe vetores como parâmetro)
+    // J6: ordem, maior, menor e média; F3 (void), F4 (recebe vetores como parâmetro)
+    // Atenção: usa a posição 0 como maior e a última como menor, então o ranking precisa estar ordenado antes (o main ordena)
     public static void exibirRanking(String[] codigos, int[] pontuacoes, int qtdAtual) {
         System.out.println("\nRanking Final 🏆");
         if(qtdAtual == 0) {
@@ -448,7 +435,6 @@ public class JogoDoMilhao {
         int posicaoReal = 1;
 
         for(int i = 0; i < qtdAtual; i++) {
-            // se não for o primeiro jogador e a pontuação for diferente da do anterior, atualiza a posição
             if (i > 0 && pontuacoes[i] != pontuacoes[i - 1]) {
                 posicaoReal = i + 1;
             }
