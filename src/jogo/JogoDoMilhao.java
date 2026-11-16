@@ -143,7 +143,7 @@ public class JogoDoMilhao {
 
         int pontuacao = 0;
 
-        System.out.println("\n=== INICIANDO A SEMANA SEM DESPERDÍCIO ===");
+        System.out.println("\n=== Iniciando o Jogo ===");
 
         for (int i = 0; i < indices.length; i++){
             int atual = indices[i];
@@ -157,7 +157,7 @@ public class JogoDoMilhao {
             pontuacao = atualizarPontosDesperdicio(pontuacao, acertou);  // J3: recebe os pontos atuais e devolve os novos
         }
 
-        System.out.println("\n🎉 FIM DA SEMANA! Sua pontuação final foi: " + pontuacao);
+        System.out.println("\n🎉 Fim do Jogo! Sua pontuação final foi: " + pontuacao);
         return pontuacao;
     }
 
@@ -210,7 +210,7 @@ public class JogoDoMilhao {
         System.out.println("No final será gerado um ranking anônimo dos usuários.");
         System.out.println("Cada pergunta terá uma explicação confiável!");
         System.out.println("O jogo tem como intuito conscientizar as pessoas sobre a causa!");
-        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------\n");
     }
 
     /*
@@ -227,7 +227,7 @@ public class JogoDoMilhao {
         for (int i = 0; i < opcoes.length; i++) {
             System.out.println(opcoes[i]);
         }
-        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------\n");
     }
 
     /*
