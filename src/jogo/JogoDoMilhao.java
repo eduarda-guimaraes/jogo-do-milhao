@@ -176,16 +176,18 @@ public class JogoDoMilhao {
     }
 
     /*
-      O que faz: Embaralha a ordem das situações trocando as posições do vetor de índices (Fisher-Yates).
-      Parâmetros: int[] indices (vetor alterado diretamente, sem retorno)
+      O que faz: Embaralha a ordem das situações.
+      Parâmetros: int[] indices
       Retorno: void
       Autor: Eduarda Guimarães
-     */
+    */
     // F3 (void), F4 (recebe vetor como parâmetro)
     public static void embaralharSituacoes(int[] indices) {
         Random rand = new Random();
-        for (int i = indices.length - 1; i > 0; i--) {
-            int sorteado = rand.nextInt(i + 1);
+
+        for (int i = 0; i < indices.length; i++) {
+            int sorteado = rand.nextInt(indices.length);
+
             int temp = indices[i];
             indices[i] = indices[sorteado];
             indices[sorteado] = temp;
